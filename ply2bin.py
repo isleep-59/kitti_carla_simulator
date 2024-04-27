@@ -2,10 +2,22 @@ from plyfile import PlyData
 import numpy as np
 import os
 import progressbar
+import shutil
+
+parent_folder = "D:/Code/kitti_carla_simulator/KITTI_Dataset_CARLA_v0.9.15-B4-AVP3.0/Carla/Maps/SUSTech_COE_ParkingLot/generated/frames/"
+output_path = "./"
 
 index = 0
-parent_folder = "D:/Code/kitti_carla_simulator/KITTI_Dataset_CARLA_v0.9.15-B4-AVP3.0/Carla/Maps/SUSTech_COE_ParkingLot/generated/frames"
 bar = progressbar.ProgressBar(max_value=len(os.listdir(parent_folder)))
+
+velodyne_path = output_path + "velodyne/"
+label_path = output_path + "labels/"
+if os.path.exists(velodyne_path):
+    shutil.rmtree(velodyne_path)
+if os.path.exists(label_path):
+    shutil.rmtree(label_path)
+os.mkdir(velodyne_path)
+os.mkdir(label_path)
 
 for ply_name in os.listdir(parent_folder):
     ply_path = os.path.join(parent_folder, ply_name)
@@ -44,11 +56,10 @@ for ply_name in os.listdir(parent_folder):
     label[label == 24] = 60 # road line - lane-marking
     label[label == 25] = 49 # ground - other-ground
     label[label == 26] = 52  # bridge - other-structure
-    label[label == 27] =49 # rail - other-ground
+    label[label == 27] = 49 # rail - other-ground
     label[label == 28] = 51 # guard rail - fence
     label[label == 29] = 60 # lane-marking
     label[label == 30] = 44 # parking
-
 
     pos.tofile("velodyne/{:0>6}.bin".format(str(index)))
     label.tofile(("labels/{:0>6}.label").format(str(index)))
